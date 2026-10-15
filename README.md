@@ -30,14 +30,21 @@ Zijn er minder dan 3 coaches binnen budget, dan vullen we aan met coaches net bo
 ## Lokaal draaien
 
 ```bash
-cp .env.example .env      # zet ADMIN_PASSWORD
+cp .env.example .env      # zet DATABASE_URL (Postgres) en ADMIN_PASSWORD
 npm install
-npm run db:push           # maakt de SQLite-database
+npm run db:push           # maakt de tabellen aan
 npm run db:seed           # 5 democoaches met reviews (alleen lokaal)
 npm run dev
 ```
 
 Tests: `npm test`.
+
+## Live zetten op Vercel
+
+1. Maak een gratis database aan bij [Neon](https://neon.tech) en kopieer de connection string.
+2. Importeer deze repository op [vercel.com/new](https://vercel.com/new).
+3. Zet bij Environment Variables `DATABASE_URL` (de Neon-link) en `ADMIN_PASSWORD`.
+4. Deploy. De build maakt de tabellen automatisch aan (`prisma db push`). Draai `db:seed` niet op productie: dat zijn verzonnen democoaches.
 
 ## Nog niet gebouwd
 
@@ -46,4 +53,3 @@ Tests: `npm test`.
 - Inloggen voor coaches (profiel, beschikbaarheid en pakketten zelf beheren).
 - Reviews schrijven na een traject en levels.
 - Videobellen op het platform.
-- Productiedatabase: zet in `prisma/schema.prisma` de provider op `postgresql` en `DATABASE_URL` naar Postgres.

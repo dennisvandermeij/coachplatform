@@ -1,11 +1,10 @@
-// SQLite voor lokaal ontwikkelen. Voor productie: provider op "postgresql" zetten
-// en DATABASE_URL naar de Postgres-database laten wijzen.
+// Postgres, lokaal en in productie (bijvoorbeeld een gratis database bij Neon).
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
