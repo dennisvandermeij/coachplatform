@@ -1,0 +1,136 @@
+// SQLite voor lokaal ontwikkelen. Voor productie: provider op "postgresql" zetten
+// en DATABASE_URL naar de Postgres-database laten wijzen.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Coach {
+  id                 String   @id @default(cuid())
+  slug               String   @unique
+  name               String
+  email              String   @unique
+  phone              String?
+  kvkNumber          String
+  certificates       String
+  bio                String
+  photoUrl           String?
+  city               String?
+  offersLive         Boolean  @default(false)
+  // Komma-gescheiden sleutels uit lib/niches.ts
+  niches             String
+  mainNiche          String
+  // Komma-gescheiden: beginner, ervaren, gevorderd
+  icpLevels          String
+  worksWithBusy      Boolean  @default(false)
+  yearsExperience    Int
+  // Coachstijl op dezelfde vijf dimensies als de klant-quickscan (1 t/m 5)
+  directness         Int
+  structure          Int
+  depth              Int
+  contact            Int
+  pace               Int
+  maxClients         Int      @default(20)
+  activeClients      Int      @default(0)
+  available          Boolean  @default(true)
+  responseHours      Int      @default(24)
+  // pending | active | rejected
+  status             String   @default("pending")
+  createdAt          DateTime @default(now())
+
+  packages     Package[]
+  appointments Appointment[]
+  bookings     Booking[]
+  reviews      Review[]
+  matches      Match[]
+}
+
+model Package {
+  id            String @id @default(cuid())
+  coachId       String
+  coach         Coach  @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  name          String
+  pricePerMonth Int
+  months        Int
+  description   String
+}
+
+model Intake {
+  id           String   @id @default(cuid())
+  goal         String
+  level        String
+  budget       Int
+  busy         Boolean
+  guidance     String
+  directness   Int
+  structure    Int
+  depth        Int
+  contact      Int
+  pace         Int
+  createdAt    DateTime @default(now())
+
+  matches      Match[]
+  appointments Appointment[]
+}
+
+model Match {
+  id       String @id @default(cuid())
+  intakeId String
+  intake   Intake @relation(fields: [intakeId], references: [id], onDelete: Cascade)
+  coachId  String
+  coach    Coach  @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  score    Int
+  // JSON-array met de redenen die de klant ziet
+  reasons  String
+  rank     Int
+  overBudget Boolean @default(false)
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  coachId     String
+  coach       Coach    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  intakeId    String?
+  intake      Intake?  @relation(fields: [intakeId], references: [id])
+  clientName  String
+  clientEmail String
+  clientPhone String?
+  startsAt    DateTime
+  // platform | eigen-tool
+  mode        String
+  // gepland | gehouden | no-show | geannuleerd
+  status      String   @default("gepland")
+  createdAt   DateTime @default(now())
+
+  @@unique([coachId, startsAt])
+}
+
+// Een betaald traject. In deze versie nog zonder betaalprovider; reviews mogen
+// alleen aan een booking hangen, zodat alleen echte klanten kunnen reviewen.
+model Booking {
+  id          String   @id @default(cuid())
+  coachId     String
+  coach       Coach    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  clientName  String
+  clientEmail String
+  startedAt   DateTime
+  // actief | afgerond | gestopt
+  status      String   @default("actief")
+  review      Review?
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  coachId   String
+  coach     Coach    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  rating    Int
+  text      String
+  authorFirstName String
+  createdAt DateTime @default(now())
+}
