@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #14213d;
+  --color-ink-soft: #4a5568;
+  --color-paper: #fbfaf7;
+  --color-card: #ffffff;
+  --color-line: #e6e2d9;
+  --color-brand: #0f766e;
+  --color-brand-dark: #0b5a54;
+  --color-brand-soft: #e6f2f0;
+  --color-accent: #b7791f;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-full bg-brand px-6 py-3 font-semibold text-white transition hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-full border border-line bg-card px-6 py-3 font-semibold text-ink transition hover:border-brand hover:text-brand;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-card p-6 shadow-sm;
+  }
+  .label {
+    @apply mb-1 block text-sm font-semibold text-ink;
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-white px-4 py-3 text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand-soft;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand-dark;
+  }
+  .heading {
+    @apply font-serif tracking-tight text-ink;
+  }
+}
